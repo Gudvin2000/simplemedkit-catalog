@@ -5467,6 +5467,7 @@
   {"id": "reg-0000000000008867", "name": "Пікопреп", "activeIngredient": "Комбінований препарат", "category": "Шлунок та травлення", "releaseForm": "порошок"},
   {"id": "reg-0000000000012371", "name": "Пікосен", "activeIngredient": "Комбінований препарат", "category": "Шлунок та травлення", "releaseForm": "капсули"},
   {"id": "reg-0000000000044843", "name": "Пікосен Мікра", "activeIngredient": "Натрію докузат", "category": "Шлунок та травлення", "releaseForm": "гель"},
+  {"id": "reg-0000000000059975", "name": "Пікосульфат", "activeIngredient": "Натрію пікосульфат", "category": "Шлунок та травлення", "releaseForm": "таблетки"},
   {"id": "reg-0000000000012374", "name": "Пікосульфат-софарма", "activeIngredient": "Натрію пікосульфат", "category": "Шлунок та травлення", "releaseForm": "краплі"},
   {"id": "reg-0000000000056935", "name": "Пікрей", "activeIngredient": "Алпелісиб", "category": "Інше", "releaseForm": "таблетки"},
   {"id": "reg-0000000000008872", "name": "Пілобакт Нео", "activeIngredient": "Комбінований препарат", "category": "Шлунок та травлення", "releaseForm": ""},
