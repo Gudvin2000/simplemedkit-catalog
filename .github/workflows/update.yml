@@ -1,0 +1,61 @@
+# Щотижневе оновлення каталогу з Державного реєстру лікарських засобів.
+#
+# Щонеділі завантажує свіжий експорт https://drlz.moz.gov.ua/export-csv,
+# перебудовує catalog.json і version.json і комітить їх, якщо щось змінилося.
+# Застосунок SimpleMedKit читає ці файли за raw-посиланням GitHub.
+name: Оновлення каталогу
+
+on:
+  schedule:
+    - cron: '17 3 * * 0' # щонеділі о 03:17 UTC
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - build_catalog.py
+      - seeds.json
+      - .github/workflows/update.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: catalog-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Завантажити експорт реєстру
+        run: |
+          curl -sS -L --fail --retry 3 --retry-delay 20 --max-time 300 \
+            -A "SimpleMedKit catalog updater (+https://github.com/Gudvin2000/simplemedkit-catalog)" \
+            -o registry.csv https://drlz.moz.gov.ua/export-csv
+          ls -la registry.csv
+          # Захист від порожнього чи обрізаного файлу.
+          test "$(wc -l < registry.csv)" -gt 10000
+
+      - name: Перебудувати каталог
+        run: |
+          python build_catalog.py registry.csv --seeds seeds.json \
+            --out catalog.json --version-out version.json
+
+      - name: Закомітити зміни
+        run: |
+          if git diff --quiet -- catalog.json; then
+            echo "Каталог не змінився."
+            exit 0
+          fi
+          git config user.name "catalog-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add catalog.json version.json
+          git commit -m "Каталог: оновлення станом на $(python -c "import json;print(json.load(open('version.json'))['version'])")"
+          git push
